@@ -1,53 +1,49 @@
-import axios from "../axios-config"
+import axios from "../axios-config";
 
-import { useState } from "react"
-import { toast } from "react-toastify"
+import { useState } from "react";
 
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
-import './AddMemory.css'
+import { toast } from "react-toastify";
+
+import "./AddMemory.css";
 
 const AddMemory = () => {
+  const [inputs, setInputs] = useState({});
+  const [image, setImage] = useState(null);
 
-  const [inputs, setInputs] = useState({})
-  const [image, setImage] = useState(null)
-
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
+    event.preventDefault();
 
-    console.log(inputs, image)
-
-    const formData = new FormData()
-    formData.append('title', inputs.title)
-    formData.append('description', inputs.description)
-    formData.append('image', image)
+    const formData = new FormData();
+    formData.append("image", image);
+    formData.append("title", inputs.title);
+    formData.append("description", inputs.description);
 
     try {
-      const response = await axios.post('/memories', formData, {
+      const response = await axios.post("/memories", formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
-      })
+      });
+      toast.success(response.data.msg);
 
-      toast.success(response.data.message)
-
-      navigate('/')
-
+      navigate("/");
     } catch (error) {
-      console.error(error)
-      toast.error(error.response.data.message)
+      console.log(error);
+      toast.error(error.response.data.msg);
     }
-  }
+  };
 
   const handleChange = (event) => {
-    if (event.target.name === 'image') {
-      setImage(event.target.files[0])
+    if (event.target.name === "image") {
+      setImage(event.target.files[0]);
     } else {
-      setInputs({...inputs, [event.target.name]: event.target.value})
+      setInputs({ ...inputs, [event.target.name]: event.target.value });
     }
-  }
+  };
 
   return (
     <div className="add-memory-page">
@@ -55,21 +51,30 @@ const AddMemory = () => {
       <form onSubmit={handleSubmit}>
         <label>
           <p>Título:</p>
-          <input type="text" placeholder="Defina um título" name="title" onChange={handleChange}/>
+          <input
+            type="text"
+            name="title"
+            placeholder="Defina um título"
+            onChange={handleChange}
+          />
         </label>
         <label>
           <p>Descrição:</p>
-          <textarea placeholder="Explique o que aconteceu..." name="description" onChange={handleChange}></textarea>
+          <textarea
+            type="text"
+            name="description"
+            placeholder="Explique o que aconteceu..."
+            onChange={handleChange}
+          />
         </label>
         <label>
           <p>Foto:</p>
-          <input type="file" name="image" onChange={handleChange}/>
+          <input type="file" name="image" onChange={handleChange} />
         </label>
-        <input type="submit" className="btn" value="Enviar" />
+        <input className="btn" type="submit" value="Enviar" />
       </form>
     </div>
-  )
-}
+  );
+};
 
-export default AddMemory
-AddMemory
+export default AddMemory;
