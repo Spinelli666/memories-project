@@ -115,6 +115,25 @@ const updateMemory = async(req, res) => {
     }
 }
 
+const toggleFavorite = async(req, res) => {
+    try {
+        const memory = await Memory.findById(req.params.id)
+
+        if(!memory) {
+            return res.status(404).json({ msg: 'Memory not found' })
+        }
+
+        memory.favorite = !memory.favorite
+
+        await memory.save()
+
+        res.json({ msg: 'Add aos favoritos', memory })
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).send('Ocorreu um erro')
+    }
+}
+
 
 module.exports = {
     createMemory,
@@ -122,4 +141,5 @@ module.exports = {
     getMemory,
     deleteMemory,
     updateMemory,
+    toggleFavorite,
 }
