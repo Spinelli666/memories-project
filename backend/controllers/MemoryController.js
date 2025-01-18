@@ -80,10 +80,46 @@ const deleteMemory = async(req, res) => {
     }
 }
 
+const updateMemory = async(req, res) => {
+    try {
+        const { title, description } = req.body
+
+        let src = null
+
+        if(req.file){
+            src = `images/${req.file.filename}`
+        }
+
+        const memory = await Memory.findById(req.params.id)
+
+        if(!memory) {
+            return res.status(404).json({ msg: 'Memory not found' })
+        }
+
+        if(src) {
+            removeOldImage(memory)
+        }
+
+        const updateDate = {}
+
+        if(title) updateDate.title = title
+        if(description) updateDate.description = description
+        if(src) updateDate.src = src
+
+        const updateMemory = await Memory.findByIdAndUpdate(req.params.id, updateDate, { new: true })
+
+        res.json({updateMemory, msg: 'Memory updated'})
+    } catch (error) {
+        console.log(error.message)
+        res.status(500).send('Ocorreu um erro')
+    }
+}
+
 
 module.exports = {
     createMemory,
     getMemories,
     getMemory,
     deleteMemory,
+    updateMemory,
 }
